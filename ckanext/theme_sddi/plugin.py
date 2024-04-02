@@ -1,15 +1,6 @@
 import ckan.plugins as plugins
 import ckan.plugins.toolkit as toolkit
 
-
-# import ckanext.theme_sddi.cli as cli
-# import ckanext.theme_sddi.helpers as helpers
-# import ckanext.theme_sddi.views as views
-# from ckanext.theme_sddi.logic import (
-#     action, auth, validators
-# )
-
-
 class ThemeSddiPlugin(plugins.SingletonPlugin):
     plugins.implements(plugins.IConfigurer)
     
