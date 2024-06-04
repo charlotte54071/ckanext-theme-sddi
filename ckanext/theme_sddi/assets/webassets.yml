@@ -1,14 +1,10 @@
-# theme_sddi-js:
-#   filter: rjsmin
-#   output: ckanext-theme_sddi/%(version)s-theme_sddi.js
-#   contents:
-#     - js/theme_sddi.js
-#   extra:
-#     preload:
-#       - base/main
-
-# theme_sddi-css:
-#   filter: cssrewrite
-#   output: ckanext-theme_sddi/%(version)s-theme_sddi.css
-#   contents:
-#     - css/theme_sddi.css
+spatial_form_js:
+  filter: rjsmin
+  extra:
+    preload:
+      - base/main
+  contents:
+    # - js/vendor/leaflet/leaflet.js
+    # - js/vendor/leaflet.draw/leaflet.draw.js
+    # - js/common_map.js
+    - js/spatial_form.js
