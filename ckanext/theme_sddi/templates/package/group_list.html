@@ -6,6 +6,7 @@
  
   {% if pkg_dict.groups %}
     <form method="post">
+      {{ h.csrf_input() if 'csrf_input' in h }}
       {% snippet 'group/snippets/group_list_package.html', groups=pkg_dict.groups %}
     </form>
   {% else %}
