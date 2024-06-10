@@ -1,0 +1,38 @@
+
+{#
+Display a hierarchical tree of organizations
+
+Example:
+
+    {% snippet "group/snippets/group_list.html" %}
+
+#}
+{#
+<div>
+     {% if  c.q %}
+     	{% set top_nodes = h.group_tree_highlight(organizations, h.group_tree(type_='group')) %}
+     {% else %}
+     	{% set top_nodes = h.group_tree(organizations=organizations, type_='group') %}
+     {% endif %}
+     {% snippet 'group/snippets/group_tree_info.html', top_nodes=top_nodes, group=groups, use_longnames=True%}
+</div>
+
+#}
+
+<div class="box" style="background-color:#0065bd;">
+  {% set top_nodes = h.group_tree(organizations=organizations, type_='group') %}
+  {% for node in top_nodes %}
+    <center>
+      <h2 style="color: white; border: 10px" >
+       {{ _(node.title) }}
+      </h2>
+  </center>
+
+  <ul class="media-grid" data-module="media-grid">
+    {% for group in h.get_allowable_children_groups(node.name)  %}
+    {% set image_url = h.get_group_image(group.id) %}
+    {% snippet "group/snippets/group_tree.html", group=group, image_url=image_url, position=loop.index %}
+    {% endfor %}
+  </ul>
+  {% endfor %}
+</div>

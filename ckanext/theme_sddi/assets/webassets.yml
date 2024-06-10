@@ -8,3 +8,16 @@ spatial_form_js:
     # - js/vendor/leaflet.draw/leaflet.draw.js
     # - js/common_map.js
     - js/spatial_form.js
+
+ghierarchy_js:
+  filter: rjsmin
+  output: ckanext-theme-sddi/%(version)s_hierarchy.js
+  extra:
+    preload:
+      - base/main
+  contents:
+    - js/jquery.hierarchy.js
+ghierarchy_css:
+  output: ckanext-theme-sddi/%(version)s_hierarchy.css
+  contents:
+    - css/hierarchy_theme.css
