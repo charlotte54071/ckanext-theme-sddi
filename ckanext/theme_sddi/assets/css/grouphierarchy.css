@@ -61,7 +61,7 @@
     height: 21px;
     margin-top: 5px;
     margin-bottom: 5px;
-    background: url('../base/images/tum-logo.png') no-repeat top right;
+    background: url('../../public/base/images/tum-logo.png') no-repeat top right;
     text-indent: -900em;
     filter: brightness(0) saturate(100%) invert(94%) sepia(12%) saturate(323%) hue-rotate(158deg) brightness(92%) contrast(93%);
     margin-left: -20px;

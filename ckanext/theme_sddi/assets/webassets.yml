@@ -17,8 +17,10 @@ ghierarchy_js:
       - base/main
   contents:
     - js/jquery.hierarchy.js
+
 ghierarchy_css:
   output: ckanext-theme-sddi/%(version)s_hierarchy.css
   contents:
     - css/hierarchy_theme.css
     - css/grouphierarchy.css
+
