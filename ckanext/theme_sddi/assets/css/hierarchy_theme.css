@@ -1,10 +1,4 @@
 
-.btn.btn-primary {
-     font-weight: 400;
-     background-color: #0065bd;
-
-}
-
 ul.hierarchy-tree-top {
      list-style-type: disc; 
      background: none;
@@ -41,19 +35,5 @@ ul.hierarchy-tree-top li.highlighted > a, ul.hierarchy-tree li.highlighted > a {
      color: hsl(194, 90%, 30%);
      /*text-decoration: underline;*/
      text-shadow: 1px 1px #dddddd;
-}
-
-.masthead .main-navbar ul li a {
-     color: #0065bd !important;
-     font-weight: bold;
-
-     &:hover {
-          color: #fff !important;
-          background-color: #003647 !important;
-     }
-     &:active {
-          color: #fff !important;
-          background-color: #003647 !important;
-     }
 }
 
