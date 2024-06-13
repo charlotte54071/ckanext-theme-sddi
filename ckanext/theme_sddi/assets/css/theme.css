@@ -83,19 +83,23 @@ body {
 
 }
 
-.masthead .main-navbar ul li a {
+.masthead .container .navbar-collapse ul > li a {
     color: #0065bd !important;
+    background-color: #fff !important;
     font-weight: bold;
-
     &:hover {
-         color: #fff !important;
-         background-color: #003647 !important;
+        color: #0065bd !important;
+        background-color: #9bc0e0 !important;
     }
-    &:active {
-         color: #fff !important;
-         background-color: #003647 !important;
-    }
+
 }
+.masthead .container .navbar-collapse ul > li a:active,
+.masthead .container .navbar-collapse ul > li a:focus
+{
+    color: #fff !important;
+    background-color: #0065bd  !important;
+}
+
 .media-item 
 {
     width: 23%;
