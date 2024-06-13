@@ -16,21 +16,19 @@
 <div class="box">
     <section class="group_list module moudle-narrow module-shallow">
         <header class="module-heading">
-
-            {% set org_image = h.url_for_static('uploads/group/' + org.image_url) %}
-            {% if not org.image_url %}
-                {% set org_image = h.url_for_static('/base/images/placeholder-organization.png') %}
+            {% set image_url = org.get('image_url') %}
+            {% if not image_url %}
+            {% set image_url = h.url_for_static('/base/images/placeholder-group.png') %}
             {% endif %}
-            {{ org.image }}
-            <a class="module-image" href="{{ org.image_display_url }}">
-                <img alt="{{org.title}}" src="{{ org_image }}" style="position:relative;bottom: 6px;">
+            <a class="module-image" href="{{ image_url }}">
+                <img alt="{{org.title}}" src="{{ image_url }}">
             </a>
             <h3 class="media-heading">
                 <a href="{{ h.url_for('organization.read', id=org.name) }}">{{ _(org.display_name) }}</a>
             </h3>
         </header>
 
-        {% for pkg in org.packages() %}
+        {% for pkg in org.get('packages')%}
         <ul class="list-unstyled dataset-list">
             <li class="dataset-item module-content">
                 <div class="dataset-content">

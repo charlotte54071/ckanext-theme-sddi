@@ -4,6 +4,7 @@ import requests
 
 import ckan.model as model
 from ckan.plugins import toolkit as tk
+from ckan.lib.dictization import model_dictize
 from ckanext.hierarchy import helpers
 
 
@@ -127,10 +128,13 @@ def get_recently_modified_group(_type):
     if groups:
         for group in groups:
             groupobj = model.Session.query(model.Group).filter_by(name=group).first()
-            _groups.append(groupobj)
+            context = {"model": model, "session": model.Session}
+            group_dict = model_dictize.group_dictize(groupobj, context)
+            #breakpoint()
+            _groups.append(group_dict)
         sorted_groups = sorted(
             _groups,
-            key=lambda grp: [pkg.metadata_modified for pkg in grp.packages() if pkg],
+            key=lambda grp: [pkg.get('metadata_modified') for pkg in grp.get('packages') if pkg],
             reverse=True,
         )
     return sorted_groups[:num]

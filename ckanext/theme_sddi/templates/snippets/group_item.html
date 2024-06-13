@@ -12,7 +12,7 @@
 
 {% if groups %}
     {% for group in groups %}
-    {% if group.packages() %}
+    {% if group.get('packages') %}
     <div class="box">
         <section class="group_list module moudle-narrow module-shallow">
             <header class="module-heading">
@@ -35,7 +35,7 @@
                 </h3>
             </header>
 
-            {% for pkg in group.packages() %}
+            {% for pkg in group.get('packages') %}
             <ul class="list-unstyled dataset-list">
                 <li class="dataset-item module-content">
                     <div class="dataset-content">
