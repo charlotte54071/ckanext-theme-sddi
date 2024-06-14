@@ -1,14 +1,22 @@
-# theme_sddi-js:
-#   filter: rjsmin
-#   output: ckanext-theme_sddi/%(version)s-theme_sddi.js
-#   contents:
-#     - js/theme_sddi.js
-#   extra:
-#     preload:
-#       - base/main
+spatial_form_js:
+  filter: rjsmin
+  extra:
+    preload:
+      - base/main
+  contents:
+    - js/spatial_form.js
 
-# theme_sddi-css:
-#   filter: cssrewrite
-#   output: ckanext-theme_sddi/%(version)s-theme_sddi.css
-#   contents:
-#     - css/theme_sddi.css
+theme_js:
+  output: ckanext-theme-sddi/%(version)s_theme.js
+  extra:
+    preload:
+      - base/main
+  contents:
+    - js/jquery.hierarchy.js
+
+theme_css:
+  output: ckanext-theme-sddi/%(version)s_theme.css
+  contents:
+    - css/hierarchy_theme.css
+    - css/theme.css
+
