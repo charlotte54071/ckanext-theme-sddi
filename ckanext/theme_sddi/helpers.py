@@ -187,3 +187,9 @@ def is_github_url(url):
     from urllib.parse import urlparse
     parsed_url = urlparse(url)
     return parsed_url.netloc.endswith('github.com')
+
+
+def is_spatial_enabled():
+    if 'spatial_query' in tk.config.get("ckan.plugins"):
+        return True
+    return False
