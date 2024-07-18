@@ -60,6 +60,7 @@ class ThemeSddiPlugin(plugins.SingletonPlugin):
             "group_tree_crumbs": h.group_tree_crumbs,
             "group_tree_section_g": h.group_tree_section_g,
             "get_recently_modified_group": h.get_recently_modified_group,
+            "is_spatial_enabled": h.is_spatial_enabled,
         }
 
     # IClick
