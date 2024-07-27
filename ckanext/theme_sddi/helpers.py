@@ -192,3 +192,7 @@ def is_spatial_enabled():
     if 'spatial_query' in tk.config.get("ckan.plugins"):
         return True
     return False
+
+
+def restricted_get_user_id():
+    return tk.g.user

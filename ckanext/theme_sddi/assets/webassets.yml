@@ -19,4 +19,5 @@ theme_css:
   contents:
     - css/hierarchy_theme.css
     - css/theme.css
+    - css/restricted_theme.css
 

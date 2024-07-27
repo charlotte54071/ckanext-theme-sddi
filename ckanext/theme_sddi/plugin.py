@@ -4,6 +4,7 @@ import ckan.plugins as plugins
 
 import ckanext.theme_sddi.cli as cli
 import ckanext.theme_sddi.logic.action as action
+import ckanext.theme_sddi.logic.auth as auth
 import ckanext.theme_sddi.helpers as h
 import ckanext.theme_sddi.middleware as middleware
 
@@ -16,6 +17,7 @@ class ThemeSddiPlugin(plugins.SingletonPlugin):
     plugins.implements(plugins.IConfigurer)
     plugins.implements(plugins.IConfigurer, inherit=True)
     plugins.implements(plugins.IActions, inherit=True)
+    plugins.implements(plugins.IAuthFunctions, inherit=True)
     plugins.implements(plugins.ITemplateHelpers, inherit=True)
     plugins.implements(plugins.IPackageController, inherit=True)
     plugins.implements(plugins.IMiddleware, inherit=True)
@@ -29,17 +31,26 @@ class ThemeSddiPlugin(plugins.SingletonPlugin):
         tk.add_resource("public/scripts/vendor/jstree", "jstree")
         tk.add_resource("assets", "theme_sddi")
 
-# IActions
-
+    # IActions
     def get_actions(self):
         return {
             "group_tree_children_g": action.group_tree_children_g,
             "user_create": action.user_create,
             "user_update": action.user_update,
+            "resource_view_list": action.restricted_resource_view_list,
+            "package_show": action.restricted_package_show,
+            "resource_search": action.restricted_resource_search,
+            "package_search": action.restricted_package_search,
+            "restricted_check_access": action.restricted_check_access,
         }
 
+    # IAuthFunctions
+    def get_auth_functions(self):
+        return {'resource_show': auth.restricted_resource_show,
+                'resource_view_show': auth.restricted_resource_show}
+
     def update_config_schema(self, schema):
-        ignore_missing =tk.get_validator(u'ignore_missing')
+        ignore_missing = tk.get_validator(u'ignore_missing')
         unicode_safe = tk.get_validator(u'unicode_safe')
 
         schema.update({
@@ -49,7 +60,7 @@ class ThemeSddiPlugin(plugins.SingletonPlugin):
             u'clear_image_upload': [ignore_missing, unicode_safe],
         })
         return schema
-        
+
     # ITemplateHelpers
 
     def get_helpers(self):
@@ -61,6 +72,7 @@ class ThemeSddiPlugin(plugins.SingletonPlugin):
             "group_tree_section_g": h.group_tree_section_g,
             "get_recently_modified_group": h.get_recently_modified_group,
             "is_spatial_enabled": h.is_spatial_enabled,
+            "restricted_get_user_id": h.restricted_get_user_id,
         }
 
     # IClick
@@ -75,7 +87,6 @@ class ThemeSddiPlugin(plugins.SingletonPlugin):
         return app
 
     # IFacets
-
     def dataset_facets(self, facets_dict, package_type):
         # Get Main and Topics group
         del facets_dict['groups']
