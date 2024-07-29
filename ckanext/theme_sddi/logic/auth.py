@@ -6,9 +6,10 @@ from ckanext.theme_sddi.logic import restricted_check_user_resource_access, rest
 
 @tk.chained_auth_function
 @tk.auth_allow_anonymous_access
-def restricted_resource_show(context, data_dict=None):
+def resource_show(next_auth, context, data_dict=None):
 
     # Ensure user who can edit the package can see the resource
+    # breakpoint()
     resource = data_dict.get('resource', context.get('resource', {}))
     if not resource:
         resource = logic_auth.get_resource_object(context, data_dict)
@@ -31,5 +32,5 @@ def restricted_resource_show(context, data_dict=None):
     authodized = restricted_check_user_resource_access(
         user_name, resource, package)
     if not authodized:
-        return False
-    return {'success': True}
+        return {'success': False, 'msg': 'Not authorized'}
+    return next_auth(context, data_dict)

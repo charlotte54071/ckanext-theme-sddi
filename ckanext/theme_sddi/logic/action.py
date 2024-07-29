@@ -5,6 +5,7 @@ import ckan.model as model
 import ckan.authz as authz
 import ckan.plugins.toolkit as tk
 import ckan.logic.schema as schema_
+import ckan.logic as ckan_logic
 
 from ckan.lib.mailer import mail_recipient
 from ckan.lib.mailer import MailerException
@@ -62,10 +63,11 @@ def _group_tree_check_g(data_dict):
     return group
 
 
-def user_create(context, data_dict):
+@tk.chained_action
+def user_create(original_action, context, data_dict):
     group_list = tk.get_action("group_list")({}, {})
     site_user = tk.get_action("get_site_user")({"ignore_auth": True}, {})
-    user = logic.action.create.user_create(context, data_dict)
+    user = original_action(context, data_dict)
 
     role = tk.config.get("ckan.userautoadd.organization_role", "member")
     context["user"] = site_user.get("name")
@@ -156,24 +158,30 @@ def restricted_user_create_and_notify(context, data_dict):
 
 
 @tk.side_effect_free
-def restricted_resource_view_list(context, data_dict):
+@tk.chained_action
+def resource_view_list(original_action, context, data_dict):
     model = context['model']
     id = _get_or_bust(data_dict, 'id')
     resource = model.Resource.get(id)
     if not resource:
-        raise tk.NotFound
-    authorized = auth.restricted_resource_show(
-        context, {'id': resource.get('id'), 'resource': resource}).get('success', False)
+        raise tk.ObjectNotFound
+    authorized = restricted_check_access(context,
+                                         {'id': resource.get('id'),
+                                          'resource': resource})
     if not authorized:
         return []
     else:
-        return tk.get_action('resource_view_list')(context, data_dict)
+        return original_action(context, data_dict)
 
 
-@tk.side_effect_free
 @tk.chained_action
-def restricted_package_show(original_action, context, data_dict):
-    package_metadata = original_action(context, data_dict)
+@ckan_logic.auth_audit_exempt
+def package_show(original_action, context, data_dict):
+    package_metadata = {}
+    try:
+        package_metadata = original_action(context, data_dict)
+    except (tk.ObjectNotFound, tk.NotAuthorized):
+        raise tk.ObjectNotFound
 
     # Ensure user who can edit can see the resource
     if authz.is_authorized(
@@ -188,15 +196,15 @@ def restricted_package_show(original_action, context, data_dict):
 
     # restricted_package_metadata['resources'] = _restricted_resource_list_url(
     #     context, restricted_package_metadata.get('resources', []))
-    restricted_package_metadata['resources'] = _restricted_resource_list_hide_fields(
+    restricted_package_metadata['resources'] = _resource_list_hide_fields(
         context, restricted_package_metadata.get('resources', []))
 
     return restricted_package_metadata
 
 
-@tk.side_effect_free
-def restricted_resource_search(context, data_dict):
-    resource_search_result = tk.get_action('resource_search')(context, data_dict)
+@tk.chained_action
+def resource_search(original_action, context, data_dict):
+    resource_search_result = original_action(context, data_dict)
 
     restricted_resource_search_result = {}
 
@@ -205,16 +213,16 @@ def restricted_resource_search(context, data_dict):
             # restricted_resource_search_result[key] = \
             #     _restricted_resource_list_url(context, value)
             restricted_resource_search_result[key] = \
-                _restricted_resource_list_hide_fields(context, value)
+                _resource_list_hide_fields(context, value)
         else:
             restricted_resource_search_result[key] = value
 
     return restricted_resource_search_result
 
 
-@tk.side_effect_free
 @tk.chained_action
-def restricted_package_search(original_action, context, data_dict):
+@ckan_logic.auth_audit_exempt
+def package_search(original_action, context, data_dict):
     package_search_result = original_action(context, data_dict)
 
     restricted_package_search_result = {}
@@ -226,15 +234,13 @@ def restricted_package_search(original_action, context, data_dict):
         if key == 'results':
             restricted_package_search_result_list = []
             for package in value:
-                restricted_package_search_result_list.append(
-                    restricted_package_show(tk.get_action('package_show'),
-                                            package_show_context,
-                                            {'id': package.get('id')}))
+                pkg = tk.get_action('package_show')(package_show_context,
+                                                    {'id': package.get('id')})
+                restricted_package_search_result_list.append(pkg)
             restricted_package_search_result[key] = \
                 restricted_package_search_result_list
         else:
             restricted_package_search_result[key] = value
-
     return restricted_package_search_result
 
 
@@ -272,7 +278,7 @@ def restricted_check_access(context, data_dict):
 #     return restricted_resources_list
 
 
-def _restricted_resource_list_hide_fields(context, resource_list):
+def _resource_list_hide_fields(context, resource_list):
     restricted_resources_list = []
     for resource in resource_list:
         # copy original resource
@@ -282,9 +288,9 @@ def _restricted_resource_list_hide_fields(context, resource_list):
         restricted_dict = logic.restricted_get_restricted_dict(restricted_resource)
 
         # hide fields to unauthorized users
-        authorized = auth.restricted_resource_show(
-            context, {'id': resource.get('id'), 'resource': resource}
-            ).get('success', False)
+        authorized = restricted_check_access(context,
+                                             {'id': resource.get('id'),
+                                              'resource': resource})
 
         # hide other fields in restricted to everyone but dataset owner(s)
         if not authz.is_authorized(
