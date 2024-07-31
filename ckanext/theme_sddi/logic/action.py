@@ -216,17 +216,6 @@ def restricted_check_access(context, data_dict):
 
     return logic.restricted_check_user_resource_access(user_name, resource_dict, package_dict)
 
-# def _restricted_resource_list_url(context, resource_list):
-#     restricted_resources_list = []
-#     for resource in resource_list:
-#         authorized = auth.restricted_resource_show(
-#             context, {'id': resource.get('id'), 'resource': resource}).get('success', False)
-#         restricted_resource = dict(resource)
-#         if not authorized:
-#             restricted_resource['url'] = _('Not Authorized')
-#         restricted_resources_list += [restricted_resource]
-#     return restricted_resources_list
-
 
 def _resource_list_hide_fields(resource_list):
     restricted_resources_list = []

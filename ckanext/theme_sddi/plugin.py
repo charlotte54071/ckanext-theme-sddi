@@ -39,10 +39,7 @@ class ThemeSddiPlugin(plugins.SingletonPlugin):
             "user_create": action.user_create,
             "user_update": action.user_update,
             "resource_view_list": action.resource_view_list,
-            # "package_show": action.package_show,
             "resource_search": action.resource_search,
-            # "package_search": action.package_search,
-            # "restricted_check_access": action.restricted_check_access,
         }
 
     # IAuthFunctions
@@ -132,8 +129,6 @@ class ThemeSddiPlugin(plugins.SingletonPlugin):
         return restricted_package_search_result
 
     def before_dataset_view(self, data_dict):
-        # data_dict["title"] = "string_not_found_in_rest_of_template"
-        # tk.check_access("package_update", data_dict)
         data_dict['resources'] = action._resource_list_hide_fields(
             data_dict.get('resources', []))
 

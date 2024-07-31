@@ -1,8 +1,6 @@
 # coding: utf8
 
 from __future__ import unicode_literals
-import ckan.authz as authz
-from ckan.common import _
 
 import ckan.lib.mailer as mailer
 import ckan.logic as logic
