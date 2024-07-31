@@ -21,34 +21,26 @@ render = tk.render
 
 def restricted_get_username_from_context():
     if tk.current_user.is_anonymous:
-        return ''
+        return tk.current_user
     else:
         return tk.current_user.name
 
 
-def restricted_get_restricted_dict(resource_dict):
+def restricted_get_restricted_dict(res_dict):
     restricted_dict = {'restricted_level': 'public', 'allowed_users': []}
 
     # the ckan plugins ckanext-scheming and ckanext-composite
     # change the structure of the resource dict and the nature of how
     # to access our restricted field values
-    if resource_dict:
+    if res_dict:
         # the dict might exist as a child inside the extras dict
-        extras = resource_dict.get('extras', {})
+        extras = res_dict.get('extras', {})
         # or the dict might exist as a direct descendant of the resource dict
-        restricted = resource_dict.get('restricted', extras.get('restricted', {}))
-        if not isinstance(restricted, dict):
-            # if the restricted property does exist, but not as a dict,
-            # we may need to parse it as a JSON string to gain access to the values.
-            # as is the case when making composite fields
-            try:
-                restricted = json.loads(restricted)
-            except ValueError:
-                restricted = {}
-
-        if restricted:
-            restricted_level = restricted.get('restricted_level', 'public')
-            allowed_users = resource_dict.get('allowed_users', '')
+        restricted_level = res_dict.get('restricted_level',
+                                        extras.get('restricted_level', {}))
+        if restricted_level:
+            # restricted_level = restricted.get('restricted_level', 'public')
+            allowed_users = res_dict.get('allowed_users', '')
             if not isinstance(allowed_users, list):
                 allowed_users = allowed_users.split(',')
             restricted_dict = {
@@ -67,7 +59,7 @@ def restricted_check_user_resource_access(user, resource_dict, package_dict):
         return {'success': True}
 
     # Registered user
-    if not user:
+    if user.is_anonymous:
         return {
             'success': False,
             'msg': 'Resource access restricted to registered users'}

@@ -42,7 +42,7 @@ class ThemeSddiPlugin(plugins.SingletonPlugin):
             # "package_show": action.package_show,
             "resource_search": action.resource_search,
             # "package_search": action.package_search,
-            "restricted_check_access": action.restricted_check_access,
+            # "restricted_check_access": action.restricted_check_access,
         }
 
     # IAuthFunctions

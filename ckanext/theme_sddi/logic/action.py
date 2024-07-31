@@ -165,41 +165,14 @@ def resource_view_list(original_action, context, data_dict):
     resource = model.Resource.get(id).as_dict()
     if not resource:
         raise tk.ObjectNotFound
-    authorized = tk.check_access('resource_show', context,
-                                 {'id': resource.get('id'),
-                                  'resource': resource})
-    if not authorized:
+    try:
+        tk.check_access('resource_view_list', context,
+                        {'id': resource.get('id'),
+                         'resource': resource})
+    except tk.NotAuthorized:
         return []
     else:
         return original_action(context, data_dict)
-
-
-# @tk.chained_action
-# @ckan_logic.auth_audit_exempt
-# def package_show(original_action, context, data_dict):
-#     package_metadata = {}
-#     try:
-#         package_metadata = original_action(context, data_dict)
-#     except (tk.ObjectNotFound, tk.NotAuthorized):
-#         raise tk.ObjectNotFound
-
-#     # Ensure user who can edit can see the resource
-#     if authz.is_authorized(
-#             'package_update', context, package_metadata).get('success', False):
-#         return package_metadata
-
-#     # Custom authorization
-#     if isinstance(package_metadata, dict):
-#         restricted_package_metadata = dict(package_metadata)
-#     else:
-#         restricted_package_metadata = dict(package_metadata.for_json())
-
-#     # restricted_package_metadata['resources'] = _restricted_resource_list_url(
-#     #     context, restricted_package_metadata.get('resources', []))
-#     restricted_package_metadata['resources'] = _resource_list_hide_fields(
-#         context, restricted_package_metadata.get('resources', []))
-
-#     return restricted_package_metadata
 
 
 @tk.chained_action
