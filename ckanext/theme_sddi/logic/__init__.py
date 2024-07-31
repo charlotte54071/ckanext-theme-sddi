@@ -21,7 +21,7 @@ render = tk.render
 
 def restricted_get_username_from_context():
     if tk.current_user.is_anonymous:
-        return tk.current_user
+        return None
     else:
         return tk.current_user.name
 
@@ -59,7 +59,7 @@ def restricted_check_user_resource_access(user, resource_dict, package_dict):
         return {'success': True}
 
     # Registered user
-    if user.is_anonymous:
+    if user is None:
         return {
             'success': False,
             'msg': 'Resource access restricted to registered users'}
