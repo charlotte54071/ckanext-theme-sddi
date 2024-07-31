@@ -162,44 +162,44 @@ def restricted_user_create_and_notify(context, data_dict):
 def resource_view_list(original_action, context, data_dict):
     model = context['model']
     id = _get_or_bust(data_dict, 'id')
-    resource = model.Resource.get(id)
+    resource = model.Resource.get(id).as_dict()
     if not resource:
         raise tk.ObjectNotFound
-    authorized = restricted_check_access(context,
-                                         {'id': resource.get('id'),
-                                          'resource': resource})
+    authorized = tk.check_access('resource_show', context,
+                                 {'id': resource.get('id'),
+                                  'resource': resource})
     if not authorized:
         return []
     else:
         return original_action(context, data_dict)
 
 
-@tk.chained_action
-@ckan_logic.auth_audit_exempt
-def package_show(original_action, context, data_dict):
-    package_metadata = {}
-    try:
-        package_metadata = original_action(context, data_dict)
-    except (tk.ObjectNotFound, tk.NotAuthorized):
-        raise tk.ObjectNotFound
+# @tk.chained_action
+# @ckan_logic.auth_audit_exempt
+# def package_show(original_action, context, data_dict):
+#     package_metadata = {}
+#     try:
+#         package_metadata = original_action(context, data_dict)
+#     except (tk.ObjectNotFound, tk.NotAuthorized):
+#         raise tk.ObjectNotFound
 
-    # Ensure user who can edit can see the resource
-    if authz.is_authorized(
-            'package_update', context, package_metadata).get('success', False):
-        return package_metadata
+#     # Ensure user who can edit can see the resource
+#     if authz.is_authorized(
+#             'package_update', context, package_metadata).get('success', False):
+#         return package_metadata
 
-    # Custom authorization
-    if isinstance(package_metadata, dict):
-        restricted_package_metadata = dict(package_metadata)
-    else:
-        restricted_package_metadata = dict(package_metadata.for_json())
+#     # Custom authorization
+#     if isinstance(package_metadata, dict):
+#         restricted_package_metadata = dict(package_metadata)
+#     else:
+#         restricted_package_metadata = dict(package_metadata.for_json())
 
-    # restricted_package_metadata['resources'] = _restricted_resource_list_url(
-    #     context, restricted_package_metadata.get('resources', []))
-    restricted_package_metadata['resources'] = _resource_list_hide_fields(
-        context, restricted_package_metadata.get('resources', []))
+#     # restricted_package_metadata['resources'] = _restricted_resource_list_url(
+#     #     context, restricted_package_metadata.get('resources', []))
+#     restricted_package_metadata['resources'] = _resource_list_hide_fields(
+#         context, restricted_package_metadata.get('resources', []))
 
-    return restricted_package_metadata
+#     return restricted_package_metadata
 
 
 @tk.chained_action
@@ -220,35 +220,12 @@ def resource_search(original_action, context, data_dict):
     return restricted_resource_search_result
 
 
-@tk.chained_action
-@ckan_logic.auth_audit_exempt
-def package_search(original_action, context, data_dict):
-    package_search_result = original_action(context, data_dict)
-
-    restricted_package_search_result = {}
-
-    package_show_context = context.copy()
-    package_show_context['with_capacity'] = False
-
-    for key, value in package_search_result.items():
-        if key == 'results':
-            restricted_package_search_result_list = []
-            for package in value:
-                pkg = tk.get_action('package_show')(package_show_context,
-                                                    {'id': package.get('id')})
-                restricted_package_search_result_list.append(pkg)
-            restricted_package_search_result[key] = \
-                restricted_package_search_result_list
-        else:
-            restricted_package_search_result[key] = value
-    return restricted_package_search_result
-
-
 @tk.side_effect_free
 def restricted_check_access(context, data_dict):
-
-    package_id = data_dict.get('package_id', False)
-    resource_id = data_dict.get('resource_id', False)
+    if not data_dict:
+        return
+    package_id = data_dict.get('id', False)
+    resource_id = data_dict.get('resource').get('id') or False
 
     user_name = logic.restricted_get_username_from_context(context)
 
@@ -278,7 +255,7 @@ def restricted_check_access(context, data_dict):
 #     return restricted_resources_list
 
 
-def _resource_list_hide_fields(context, resource_list):
+def _resource_list_hide_fields(resource_list):
     restricted_resources_list = []
     for resource in resource_list:
         # copy original resource
@@ -286,18 +263,13 @@ def _resource_list_hide_fields(context, resource_list):
 
         # get the restricted fields
         restricted_dict = logic.restricted_get_restricted_dict(restricted_resource)
-
-        # hide fields to unauthorized users
-        authorized = restricted_check_access(context,
-                                             {'id': resource.get('id'),
-                                              'resource': resource})
-
+        context = {'user': tk.g.user, 'model': model}
         # hide other fields in restricted to everyone but dataset owner(s)
         if not authz.is_authorized(
                 'package_update', context, {'id': resource.get('package_id')}
                 ).get('success'):
 
-            user_name = logic.restricted_get_username_from_context(context)
+            user_name = logic.restricted_get_username_from_context()
 
             # hide partially other allowed user_names (keep own)
             allowed_users = []
@@ -309,7 +281,7 @@ def _resource_list_hide_fields(context, resource_list):
                         allowed_users.append(user[0:3] + '*****' + user[-2:])
 
             new_restricted = json.dumps({
-                'level': restricted_dict.get("level"),
+                'level': restricted_dict.get("restricted_level"),
                 'allowed_users': ','.join(allowed_users)})
             extras_restricted = resource.get('extras', {}).get('restricted', {})
             if (extras_restricted):

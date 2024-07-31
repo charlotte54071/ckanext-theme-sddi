@@ -39,16 +39,16 @@ class ThemeSddiPlugin(plugins.SingletonPlugin):
             "user_create": action.user_create,
             "user_update": action.user_update,
             "resource_view_list": action.resource_view_list,
-            "package_show": action.package_show,
+            # "package_show": action.package_show,
             "resource_search": action.resource_search,
-            "package_search": action.package_search,
+            # "package_search": action.package_search,
             "restricted_check_access": action.restricted_check_access,
         }
 
     # IAuthFunctions
     def get_auth_functions(self):
-        return {'resource_show': auth.resource_show,
-                'resource_view_show': auth.resource_show}
+        return {'resource_show': auth.restricted_resource_show,
+                'resource_view_show': auth.restricted_resource_show}
 
     def update_config_schema(self, schema):
         ignore_missing = tk.get_validator(u'ignore_missing')
@@ -114,6 +114,30 @@ class ThemeSddiPlugin(plugins.SingletonPlugin):
                 pkg_dict["topics"] = group
 
         return pkg_dict
+
+    def after_dataset_search(self, search_results, search_params):
+        context = {'with_capacity': False}
+        restricted_package_search_result = {}  # Define the variable here
+        for key, value in search_results.items():
+            if key == 'results':
+                restricted_package_search_result_list = []
+                for package in value:
+                    pkg = tk.get_action('package_show')(context,
+                                                        {'id': package.get('id')})
+                    restricted_package_search_result_list.append(pkg)
+                restricted_package_search_result[key] = \
+                    restricted_package_search_result_list
+            else:
+                restricted_package_search_result[key] = value
+        return restricted_package_search_result
+
+    def before_dataset_view(self, data_dict):
+        # data_dict["title"] = "string_not_found_in_rest_of_template"
+        # tk.check_access("package_update", data_dict)
+        data_dict['resources'] = action._resource_list_hide_fields(
+            data_dict.get('resources', []))
+
+        return data_dict
 
     # IResourceController
     def before_resource_update(self, context, current, resource):

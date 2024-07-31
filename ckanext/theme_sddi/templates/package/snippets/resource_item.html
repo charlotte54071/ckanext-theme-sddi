@@ -16,6 +16,8 @@
 {% endblock %}
 
 {% block resource_item_explore %}
+{{ authorized }}
+
   {% if authorized %}
     {{ super() }}
   {% else %}

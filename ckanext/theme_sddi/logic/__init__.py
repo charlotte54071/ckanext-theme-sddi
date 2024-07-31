@@ -19,7 +19,7 @@ log = getLogger(__name__)
 render = tk.render
 
 
-def restricted_get_username_from_context(context):
+def restricted_get_username_from_context():
     if tk.current_user.is_anonymous:
         return ''
     else:
@@ -27,7 +27,7 @@ def restricted_get_username_from_context(context):
 
 
 def restricted_get_restricted_dict(resource_dict):
-    restricted_dict = {'level': 'public', 'allowed_users': []}
+    restricted_dict = {'restricted_level': 'public', 'allowed_users': []}
 
     # the ckan plugins ckanext-scheming and ckanext-composite
     # change the structure of the resource dict and the nature of how
@@ -47,12 +47,12 @@ def restricted_get_restricted_dict(resource_dict):
                 restricted = {}
 
         if restricted:
-            restricted_level = restricted.get('level', 'public')
+            restricted_level = restricted.get('restricted_level', 'public')
             allowed_users = resource_dict.get('allowed_users', '')
             if not isinstance(allowed_users, list):
                 allowed_users = allowed_users.split(',')
             restricted_dict = {
-                'level': restricted_level,
+                'restricted_level': restricted_level,
                 'allowed_users': allowed_users}
 
     return restricted_dict
@@ -60,10 +60,8 @@ def restricted_get_restricted_dict(resource_dict):
 
 def restricted_check_user_resource_access(user, resource_dict, package_dict):
     restricted_dict = restricted_get_restricted_dict(resource_dict)
-
-    restricted_level = restricted_dict.get('level', 'public')
+    restricted_level = restricted_dict.get('restricted_level')
     allowed_users = restricted_dict.get('allowed_users', [])
-
     # Public resources (DEFAULT)
     if not restricted_level or restricted_level == 'public':
         return {'success': True}
