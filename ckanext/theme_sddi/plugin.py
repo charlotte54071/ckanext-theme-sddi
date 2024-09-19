@@ -6,7 +6,7 @@ import ckanext.theme_sddi.cli as cli
 import ckanext.theme_sddi.logic.action as action
 import ckanext.theme_sddi.logic.auth as auth
 import ckanext.theme_sddi.helpers as h
-import ckanext.theme_sddi.middleware as middleware
+from ckanext.theme_sddi import middleware
 import ckanext.theme_sddi.logic as logic
 
 tk = plugins.toolkit
