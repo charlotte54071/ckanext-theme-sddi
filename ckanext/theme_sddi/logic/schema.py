@@ -1,1 +1,0 @@
-# Schema.py is a file that defines the schema for the dataset and resource
