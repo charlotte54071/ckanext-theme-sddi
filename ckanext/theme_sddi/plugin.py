@@ -85,6 +85,8 @@ class ThemeSddiPlugin(plugins.SingletonPlugin):
         return facets_dict
 
     # IPackageController
+    def before_dataset_index(self, pkg_dict):
+        return self.before_index(pkg_dict)
 
     def before_index(self, pkg_dict):
         # Get the group hierarchy

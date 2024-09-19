@@ -130,7 +130,6 @@ def get_recently_modified_group(_type):
             groupobj = model.Session.query(model.Group).filter_by(name=group).first()
             context = {"model": model, "session": model.Session}
             group_dict = model_dictize.group_dictize(groupobj, context)
-            #breakpoint()
             _groups.append(group_dict)
         sorted_groups = sorted(
             _groups,
