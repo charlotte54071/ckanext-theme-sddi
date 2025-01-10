@@ -82,6 +82,7 @@ class ThemeSddiPlugin(plugins.SingletonPlugin):
 
     def make_middleware(self, app, config):
         app.before_request(middleware.ckanext_before_request)
+        app.after_request(middleware.ckanext_after_request)
         return app
 
     # IFacets
