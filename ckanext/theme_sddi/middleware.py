@@ -24,6 +24,7 @@ def user_cannot_send_reset(plugin_extras):
 
 
 def ckanext_before_request():
+
     if request.endpoint == "user.request_reset" and request.method == "POST":
         id = request.form.get("user")
         site_user = tk.get_action("get_site_user")({"ignore_auth": True}, {})
@@ -50,3 +51,12 @@ def ckanext_before_request():
             )
         except tk.ObjectNotFound:
             tk.abort(404, tk._("User not found"))
+
+
+def ckanext_after_request(response):
+    if request.view_args.get('logic_function') == 'status_show':
+        data = response.json
+        del data['result']['ckan_version']
+        response.set_data(json.dumps(data))
+        return response
+    return response
