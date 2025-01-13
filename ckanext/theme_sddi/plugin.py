@@ -120,8 +120,11 @@ class ThemeSddiPlugin(plugins.SingletonPlugin):
             if key == 'results':
                 restricted_package_search_result_list = []
                 for package in value:
-                    pkg = tk.get_action('package_show')(context,
-                                                        {'id': package.get('id')})
+                    try:
+                        pkg = tk.get_action('package_show')(context,
+                                                            {'id': package.get('id')})
+                    except tk.ObjectNotFound:
+                        continue
                     restricted_package_search_result_list.append(pkg)
                 restricted_package_search_result[key] = \
                     restricted_package_search_result_list
