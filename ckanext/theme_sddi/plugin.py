@@ -8,13 +8,15 @@ import ckanext.theme_sddi.logic.auth as auth
 import ckanext.theme_sddi.helpers as h
 from ckanext.theme_sddi import middleware
 import ckanext.theme_sddi.logic as logic
+from ckan.lib.plugins import DefaultTranslation
 
-tk = plugins.toolkit
+
+from ckan.plugins import toolkit as tk
 
 log = logging.getLogger(__name__)
 
 
-class ThemeSddiPlugin(plugins.SingletonPlugin):
+class ThemeSddiPlugin(plugins.SingletonPlugin, DefaultTranslation):
     plugins.implements(plugins.IConfigurer)
     plugins.implements(plugins.IConfigurer, inherit=True)
     plugins.implements(plugins.IActions, inherit=True)
@@ -24,6 +26,7 @@ class ThemeSddiPlugin(plugins.SingletonPlugin):
     plugins.implements(plugins.IMiddleware, inherit=True)
     plugins.implements(plugins.IClick)
     plugins.implements(plugins.IFacets, inherit=True)
+    plugins.implements(plugins.ITranslation)
 
     # IConfigurer
     def update_config(self, config_):
