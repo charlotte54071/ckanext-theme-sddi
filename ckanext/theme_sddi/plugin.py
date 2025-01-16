@@ -1,4 +1,5 @@
 import logging
+import json
 
 import ckan.plugins as plugins
 
@@ -110,10 +111,9 @@ class ThemeSddiPlugin(plugins.SingletonPlugin, DefaultTranslation):
             group_dict = tk.get_action("group_show")({}, {"id": group})
             groups_data = group_dict.get("groups", [])
             if groups_data[0]["name"] == "main-categories":
-                pkg_dict["main"] = group
+                pkg_dict["main"] = group_dict.get("display_name")
             else:
-                pkg_dict["topics"] = group
-
+                pkg_dict["topics"] = group_dict.get("display_name")
         return pkg_dict
 
     def after_dataset_search(self, search_results, search_params):
