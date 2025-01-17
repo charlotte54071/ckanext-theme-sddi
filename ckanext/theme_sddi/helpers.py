@@ -69,8 +69,6 @@ def get_allowable_children_groups(group_id):
         allowable_parent_groups = group.get_children_group_hierarchy(type="group")
     else:
         allowable_parent_groups = model.Group.all(group_type="group")
-    print(allowable_parent_groups)
-
     return allowable_parent_groups
 
 
@@ -86,7 +84,6 @@ def get_selected_group(groups, parent_group):
     category_gr = []
     for name in group_name:
         for selected_gr in groups:
-            print(selected_gr)
             if selected_gr["name"] == name:
                 # category_gr.append(selected_gr['title'])
                 category_gr.append(selected_gr)

@@ -1,4 +1,5 @@
 import logging
+import json
 
 import ckan.plugins as plugins
 
@@ -8,13 +9,15 @@ import ckanext.theme_sddi.logic.auth as auth
 import ckanext.theme_sddi.helpers as h
 from ckanext.theme_sddi import middleware
 import ckanext.theme_sddi.logic as logic
+from ckan.lib.plugins import DefaultTranslation
 
-tk = plugins.toolkit
+
+from ckan.plugins import toolkit as tk
 
 log = logging.getLogger(__name__)
 
 
-class ThemeSddiPlugin(plugins.SingletonPlugin):
+class ThemeSddiPlugin(plugins.SingletonPlugin, DefaultTranslation):
     plugins.implements(plugins.IConfigurer)
     plugins.implements(plugins.IConfigurer, inherit=True)
     plugins.implements(plugins.IActions, inherit=True)
@@ -24,6 +27,7 @@ class ThemeSddiPlugin(plugins.SingletonPlugin):
     plugins.implements(plugins.IMiddleware, inherit=True)
     plugins.implements(plugins.IClick)
     plugins.implements(plugins.IFacets, inherit=True)
+    plugins.implements(plugins.ITranslation)
 
     # IConfigurer
     def update_config(self, config_):
@@ -107,10 +111,9 @@ class ThemeSddiPlugin(plugins.SingletonPlugin):
             group_dict = tk.get_action("group_show")({}, {"id": group})
             groups_data = group_dict.get("groups", [])
             if groups_data[0]["name"] == "main-categories":
-                pkg_dict["main"] = group
+                pkg_dict["main"] = group_dict.get("display_name")
             else:
-                pkg_dict["topics"] = group
-
+                pkg_dict["topics"] = group_dict.get("display_name")
         return pkg_dict
 
     def after_dataset_search(self, search_results, search_params):
@@ -120,8 +123,11 @@ class ThemeSddiPlugin(plugins.SingletonPlugin):
             if key == 'results':
                 restricted_package_search_result_list = []
                 for package in value:
-                    pkg = tk.get_action('package_show')(context,
-                                                        {'id': package.get('id')})
+                    try:
+                        pkg = tk.get_action('package_show')(context,
+                                                            {'id': package.get('id')})
+                    except tk.ObjectNotFound:
+                        continue
                     restricted_package_search_result_list.append(pkg)
                 restricted_package_search_result[key] = \
                     restricted_package_search_result_list
