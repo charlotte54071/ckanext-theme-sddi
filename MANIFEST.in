@@ -1,7 +1,7 @@
 include README.rst
 include LICENSE
 include requirements.txt
-recursive-include public *
+recursive-include ckanext/theme_sddi/public *
 recursive-include ckanext/theme_sddi *.html *.json *.js *.less *.css *.mo *.yml
 recursive-include ckanext/theme_sddi/migration *.ini *.py *.mako
 recursive-include ckanext/theme_sddi/i18n *
