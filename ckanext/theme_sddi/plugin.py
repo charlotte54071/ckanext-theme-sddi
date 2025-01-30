@@ -94,7 +94,7 @@ class ThemeSddiPlugin(plugins.SingletonPlugin, DefaultTranslation):
         # Get Main and Topics group
         del facets_dict['groups']
         facets_dict['main'] = tk._('Main Categories')
-        facets_dict['topics'] = tk._('Topics')
+        facets_dict['topic'] = tk._('Topics')
 
         return facets_dict
 
@@ -105,6 +105,8 @@ class ThemeSddiPlugin(plugins.SingletonPlugin, DefaultTranslation):
     def before_index(self, pkg_dict):
         # Get the group hierarchy
         groups = pkg_dict.get("groups", [])
+
+        topic_names = []
         if not groups:
             return pkg_dict
         for group in groups:
@@ -113,7 +115,9 @@ class ThemeSddiPlugin(plugins.SingletonPlugin, DefaultTranslation):
             if groups_data[0]["name"] == "main-categories":
                 pkg_dict["main"] = group_dict.get("display_name")
             else:
-                pkg_dict["topics"] = group_dict.get("display_name")
+                topic_names.append(group_dict.get("display_name"))
+
+        pkg_dict["topic"] = topic_names
         return pkg_dict
 
     def after_dataset_search(self, search_results, search_params):
