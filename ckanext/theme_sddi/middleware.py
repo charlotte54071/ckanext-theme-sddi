@@ -54,9 +54,10 @@ def ckanext_before_request():
 
 
 def ckanext_after_request(response):
-    if request.view_args.get('logic_function') == 'status_show':
-        data = response.json
-        del data['result']['ckan_version']
-        response.set_data(json.dumps(data))
-        return response
+    if hasattr(request, 'view_args') and request.view_args:
+        if request.view_args.get('logic_function') == 'status_show':
+            data = response.json
+            del data['result']['ckan_version']
+            response.set_data(json.dumps(data))
+
     return response
