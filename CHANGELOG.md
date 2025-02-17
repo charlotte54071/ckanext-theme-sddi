@@ -9,7 +9,9 @@ For releases `< 1.0.0` minor version steps may indicate breaking changes too.
 ## [0.0.4] - 2025-02-17
 
 ### Fixed
-Middleware fix (see [#15](https://github.com/MarijaKnezevic/ckanext-theme-sddi/pull/15) )
+ - Middleware fix (see [#15](https://github.com/MarijaKnezevic/ckanext-theme-sddi/pull/15) )
+ - Update logic for the missing resources (see [#18](https://github.com/MarijaKnezevic/ckanext-theme-sddi/pull/18) )
+ - Typo fixing
 
 ## [0.0.3] - 2025-02-04
 ### Fixed
