@@ -6,12 +6,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 For releases `< 1.0.0` minor version steps may indicate breaking changes too.
 
-## [0.0.4] - 2025-02-17
+## [0.0.4] - 2025-02-18
 
 ### Fixed
  - Middleware fix (see [#15](https://github.com/MarijaKnezevic/ckanext-theme-sddi/pull/15) )
  - Update logic for the missing resources (see [#18](https://github.com/MarijaKnezevic/ckanext-theme-sddi/pull/18) )
  - Typo fixing
+ - Show map when displaying spatial metadata field
 
 ## [0.0.3] - 2025-02-04
 ### Fixed
