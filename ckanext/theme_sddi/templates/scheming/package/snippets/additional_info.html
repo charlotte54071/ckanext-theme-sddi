@@ -20,8 +20,8 @@
             <th scope="row" class="dataset-label" property="rdfs:label">{{ _('Räumliche Ausdehnung (Geometrie)') }}</th>
             <td class="dataset-details" property="rdf:value"><p id="para" class="myClass">{{ pkg_dict.spatial }}</p><button id="clickMe" class="clickMe btn btn-primary">+</button></td>
           </tr>
-      {% else %}
-            <tr>
+          {%- endif -%}
+        <tr>
         <th scope="row" class="dataset-label">
           {% if field.display_email_name_field %}
             {{ h.scheming_language_text(field.display_email_name_field)|title }}
@@ -37,7 +37,7 @@
                 field=field, data=pkg_dict -%}
         </td>
       </tr>
-      {%- endif -%}
+      
        {%- endif -%}
         
     

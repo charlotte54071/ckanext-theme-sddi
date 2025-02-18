@@ -33,7 +33,6 @@ class ThemeSddiPlugin(plugins.SingletonPlugin, DefaultTranslation):
     def update_config(self, config_):
         tk.add_template_directory(config_, "templates")
         tk.add_public_directory(config_, "public")
-        tk.add_resource("public/scripts/vendor/jstree", "jstree")
         tk.add_resource("assets", "theme_sddi")
 
     # IActions
