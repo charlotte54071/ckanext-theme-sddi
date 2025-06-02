@@ -1,63 +1,24 @@
-{# 
-  文件路径： my_extension/templates/package/new_resource.html 
-  这个模板会覆盖 CKAN 默认的 “添加新资源（New Resource）” 页面。 
-#}
-
+{# my_extension/templates/package/new_resource.html #}
 {% extends 'package/snippets/resource_form.html' %}
 
-{#
-  1. 先重写 basic_fields Block，只渲染我们要测试的 3 个字段：
-     - resource_type（主分类）
-     - classification（当 resource_type=project 时显示）
-     - data_format（当 resource_type=dataset 时显示）
-  2. 不做循环渲染 schema.resource_fields，这样避免重复、也能先验证“conditional_fields.js”是否生效。
-#}
-
 {% block basic_fields %}
-
-  {# ——— 1. 渲染主分类字段 resource_type ——— #}
+  {# 仅渲染一个“主分类”字段 resource_type #}
   <div class="form-group" id="field_resource_type">
     {{ h.render_field(form.resource_type) }}
   </div>
 
-  {# ——— 2. 渲染一个高亮提示，证明 basic_fields Block 已经加载 —— #}
-  <div style="background: #f9f2f4; border: 1px solid #e4a0a7; padding: 10px; margin-bottom: 15px;">
-    <strong>【渲染测试】basic_fields Block 已经被加载到页面。</strong>
+  {# 测试高亮，确认 basic_fields 这段确实被加载 #}
+  <div style="background: #f9f2f4; border: 1px solid #e4a0a7; padding:10px; margin-bottom:15px;">
+    <strong>【渲染测试】仅渲染 resource_type 字段。</strong>
   </div>
-
-  {# ——— 3. 当 resource_type=project 时，显示 classification 字段 —— #}
-  <div class="form-group"
-       data-relevant="resource_type=project"
-       id="field_classification">
-    {{ h.render_field(form.classification) }}
-  </div>
-
-  {# ——— 4. 当 resource_type=dataset 时，显示 data_format 字段 —— #}
-  <div class="form-group"
-       data-relevant="resource_type=dataset"
-       id="field_data_format">
-    {{ h.render_field(form.data_format) }}
-  </div>
-
-  {# 
-    如果要后续单独用循环把剩余所有 resource_fields 也渲染出来，
-    可以在这里插入一个循环，但要确保跳过上面已经手动渲染过的三个字段：
-    resource_type、classification、data_format 
-  #}
-
 {% endblock %}
-
 
 {% block metadata_fields %}
-{# （此处不渲染任何 metadata_fields，留空即可） #}
+  {# 不渲染任何 metadata_fields，留空即可 #}
 {% endblock %}
-
 
 {% block scripts %}
   {{ super() }}
-  {# 
-    最关键的一步：引入 Scheming 提供的 conditional_fields.js，
-    才能让 data-relevant="resource_type=XXX" 的 <div> 自动切换显隐。 
-  #}
-  {{ h.include_js('ckanext/scheming/js/conditional_fields.js') }}
+  {# 如果你之后要用 data-relevant 才需要这行；此时先不引入也可以 #}
+  {{!-- {{ h.include_js('ckanext/scheming/js/conditional_fields.js') }} --}}
 {% endblock %}
