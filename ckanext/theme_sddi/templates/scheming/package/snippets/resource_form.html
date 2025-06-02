@@ -5,15 +5,12 @@
   {%- if pages and stage -%}
     <ol class="stages stage-1">
       {%- for p in pages -%}
-        <li class="{{
-          'first ' if loop.first else ''}}"
-          style="width:{{ 100 / (loop.length + 1) }}%">
-          <span class="highlight" style="padding-right:0"><a href="{{
-              h.url_for(dataset_type + '.scheming_new_page',
+        <li class="{{ 'first ' if loop.first else ''}}" style="width:{{ 100 / (loop.length + 1) }}%">
+          <span class="highlight" style="padding-right:0">
+            <a href="{{ h.url_for(dataset_type + '.scheming_new_page',
                 package_type=dataset_type,
                 id=pkg_name,
-                page=loop.index)
-            }}">{{ h.scheming_language_text(p.title) }}</a>
+                page=loop.index) }}">{{ h.scheming_language_text(p.title) }}</a>
           </span>
         </li>
       {%- endfor -%}
@@ -26,6 +23,7 @@
   {%- endif -%}
 {% endblock %}
 
+
 {% block errors %}
   {%- if errors -%}
     {%- set schema = h.scheming_get_dataset_schema(dataset_type) -%}
@@ -35,29 +33,46 @@
   {%- endif -%}
 {% endblock %}
 
+
 {% block basic_fields %}
+  {# —— 测试用提示：确认 basic_fields 这个 Block 已被加载 —— #}
+  <div style="background: #f9f2f4; border: 1px solid #e4a0a7; padding: 10px; margin-bottom: 15px;">
+    <strong>【渲染测试】basic_fields Block 已经被加载到页面。</strong>
+  </div>
+
   {%- if not dataset_type -%}
     <p>
-    dataset_type not passed to template. your version of CKAN
-    might not be compatible with ckanext-scheming
+      dataset_type not passed to template. your version of CKAN
+      might not be compatible with ckanext-scheming
     </p>
   {%- endif -%}
 
+  {# —— 取出 schema，准备循环渲染字段 —— #}
   {%- set schema = h.scheming_get_dataset_schema(dataset_type) -%}
+
+  {# —— 1. 单独渲染 Main Category 字段 —— #}
+  <div class="form-group" id="field_main_category">
+    {{ h.render_field(form.main_category) }}
+  </div>
+
+  {# —— 2. 渲染“常规字段”（不参与条件切换的字段） —— #}
+  {#   假设你的 schema 里一共有：                      #}
+  {#     main_category、online_field_1、geo_field_1、foo_bar、baz_qux   #}
+  {#   这里只把 main_category、online_field_1、geo_field_1 排除，#}
+  {#   其他字段都当作“常规字段”渲染                    #}
   {%- for field in schema.resource_fields -%}
-    {%- if field.form_snippet is not none -%}
+    {%- if field.form_snippet is not none and 
+           field.field_name not in ['main_category', 'online_field_1', 'geo_field_1'] -%}
       {%- if field.field_name not in data %}
-        {# Set the field default value before rendering but only if
-        it doesn't already exist in data which would mean the form
-        has been submitted. #}
         {% if field.default_jinja2 %}
-          {% do data.__setitem__(
-            field.field_name,
-            h.scheming_render_from_string(field.default_jinja2)) %}
+          {% do data.__setitem__(field.field_name,
+             h.scheming_render_from_string(field.default_jinja2)) %}
         {% elif field.default %}
           {% do data.__setitem__(field.field_name, field.default) %}
         {% endif %}
-      {% endif -%}
+      {%- endif -%}
+
+      {# 用 scheming 自带的 snippet 渲染这个常规字段 #}
       {%- snippet 'scheming/snippets/form_field.html',
         field=field,
         data=data,
@@ -69,8 +84,59 @@
     {%- endif -%}
   {%- endfor -%}
 
+
+  {# —— 3. “Online Application 专属字段” —— #}
+  <div class="form-group conditional-block" data-category="online_application" style="display:none;">
+    {{ h.render_field(form.online_field_1) }}
+  </div>
+
+  {# —— 4. “Geospatial Data 专属字段” —— #}
+  <div class="form-group conditional-block" data-category="geospatial_data" style="display:none;">
+    {{ h.render_field(form.geo_field_1) }}
+  </div>
+
+  {# —— 如果以后要在其他分类下显示/隐藏更多字段，也在这里继续加 —— #}
+  {# 
+  <div class="form-group conditional-block" data-category="another_category" style="display:none;">
+    {{ h.render_field(form.another_field) }}
+  </div>
+  #}
+
 {% endblock %}
 
 
-{% block metadata_fields %}
+{% block metadata_fields %}{% endblock %}
+
+
+{# —— JavaScript 脚本：在页面底部，根据 Main Category 下拉的值切换显示/隐藏 —— #}
+{% block scripts %}
+  {{ super() }} {# 保留父模板里可能已有的脚本引用 —— #}
+  <script type="text/javascript">
+    (function() {
+      // 找到“Main Category”下拉框
+      var mainSelect = document.querySelector('#field_main_category select');
+      if (!mainSelect) {
+        return;
+      }
+
+      // 切换函数：隐藏所有 conditional-block，然后显示对应 data-category=val 的块
+      function toggleConditionalBlocks() {
+        var val = mainSelect.value;
+        document.querySelectorAll('.conditional-block').forEach(function(block) {
+          block.style.display = 'none';
+        });
+        if (val) {
+          var selector = '.conditional-block[data-category="' + val + '"]';
+          document.querySelectorAll(selector).forEach(function(block) {
+            block.style.display = 'block';
+          });
+        }
+      }
+
+      // 页面第一次加载时立刻执行一次
+      toggleConditionalBlocks();
+      // 当 Main Category 下拉框变化时，重新切换
+      mainSelect.addEventListener('change', toggleConditionalBlocks);
+    })();
+  </script>
 {% endblock %}
