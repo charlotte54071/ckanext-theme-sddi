@@ -74,3 +74,115 @@
 
 {% block metadata_fields %}
 {% endblock %}
+
+
+{% block metadata_fields %}
+{% endblock %}
+
+{# ───────────────────────────────────────────────────────── #}
+{# After all basic_fields are rendered, insert the dynamic hiding/showing script #}
+{# ───────────────────────────────────────────────────────── #}
+<script type="text/javascript">
+  jQuery(function($) {
+    function updateResourceFields() {
+      // Read the current value of the "Main Category" drop-down box
+      var val = $('select[name="resource_type"]').val();
+
+      // —— First hide all rows of fields that can be displayed conditionally —— 
+      $('.form-group.field-classification').hide();
+      $('.form-group.field-data_format').hide();
+      $('.form-group.field-data_status').hide();
+      $('.form-group.field-data_type').hide();
+      $('.form-group.field-data_standard').hide();
+      $('.form-group.field-service_type').hide();
+      $('.form-group.field-api_endpoint').hide();
+      $('.form-group.field-supported_method').hide();
+      $('.form-group.field-service_format').hide();
+      $('.form-group.field-application_category').hide();
+      $('.form-group.field-browser_requirements').hide();
+      $('.form-group.field-supported_platform').hide();
+      $('.form-group.field-supporting_data').hide();
+      $('.form-group.field-simulation_model').hide();
+      $('.form-group.field-software_application_category').hide();
+      $('.form-group.field-memory_requirements').hide();
+      $('.form-group.field-software_requirements').hide();
+      $('.form-group.field-suppoeted_platform').hide();
+      $('.form-group.field-operating_system').hide();
+      $('.form-group.field-feature_list').hide();
+      $('.form-group.field-supporting_data').hide();
+      $('.form-group.field-manufacturer').hide();
+      $('.form-group.field-model').hide();
+      $('.form-group.field-observable_property').hide();
+      $('.form-group.field-unit').hide();
+      $('.form-group.field-dynamic_state').hide();
+      $('.form-group.field-sensor_type').hide();
+      $('.form-group.field-characteristics').hide();
+      $('.form-group.field-capabilities').hide();
+      $('.form-group.field-connecting_method').hide();
+      $('.form-group.field-update_frequency').hide();
+      $('.form-group.field-device_id').hide();
+      $('.form-group.field-geoobject_dynamic_state').hide();
+      $('.form-group.field-functional_property').hide();
+      $('.form-group.field-crs').hide();
+
+      // —— Display the corresponding field row according to the current Main Category —— 
+      if (val === 'project') {
+        $('.form-group.field-classification').show();
+      }
+      else if (val === 'dataset') {
+        $('.form-group.field-data_format').show();
+        $('.form-group.field-data_status').show();
+        $('.form-group.field-data_type').show();
+        $('.form-group.field-data_standard').show();
+      }
+      else if (val === 'online_service') {
+        $('.form-group.field-service_type').show();
+        $('.form-group.field-api_endpoint').show();
+        $('.form-group.field-supported_method').show();
+        $('.form-group.field-service_format').show();
+      }
+      else if (val === 'online_application') {
+        $('.form-group.field-application_category').show();
+        $('.form-group.field-browser_requirements').show();
+        $('.form-group.field-supported_platform').show();
+        $('.form-group.field-supporting_data').show();
+      }
+      else if (val === 'digital_twin') {
+        $('.form-group.field-simulation_model').show();
+      }
+      else if (val === 'software') {
+        $('.form-group.field-software_application_category').show();
+        $('.form-group.field-memory_requirements').show();
+        $('.form-group.field-software_requirements').show();
+        $('.form-group.field-suppoeted_platform').show();
+        $('.form-group.field-operating_system').show();
+        $('.form-group.field-feature_list').show();
+        $('.form-group.field-supporting_data').show();
+      }
+      else if (val === 'device') {
+        $('.form-group.field-manufacturer').show();
+        $('.form-group.field-model').show();
+        $('.form-group.field-observable_property').show();
+        $('.form-group.field-unit').show();
+        $('.form-group.field-dynamic_state').show();
+        $('.form-group.field-sensor_type').show();
+        $('.form-group.field-characteristics').show();
+        $('.form-group.field-capabilities').show();
+        $('.form-group.field-connecting_method').show();
+        $('.form-group.field-update_frequency').show();
+      }
+      else if (val === 'geo_object') {
+        $('.form-group.field-device_id').show();
+        $('.form-group.field-geoobject_dynamic_state').show();
+        $('.form-group.field-functional_property').show();
+        $('.form-group.field-crs').show();
+      }
+    }
+
+    // Execute once when the page loads to make the fields under the default category display/hide correctly
+    updateResourceFields();
+    // Called again when the value of the Main Category drop-down box changes
+    $(document).on('change', 'select[name="resource_type"]', updateResourceFields);
+  });
+</script>
+
