@@ -1,4 +1,23 @@
-{% extends 'package/snippets/resource_form.html' %}
+{# templates/scheming/package/resource_form.html #}
+{% ckan_extends "scheming/package/resource_form.html" %}
+
+{# 1. 覆盖 <form> 起始标签，给它 data-module #}
+{% block form_tag %}
+<form class="resource-form"
+      data-module="scheming-relevant"
+      action="{{ action }}"
+      method="post"
+      enctype="multipart/form-data">
+{% endblock %}
+
+{# 2. 在页面脚本块追加 JS 资产 #}
+{% block page_scripts %}
+  {{ super() }}
+  {% asset 'scheming/scheming-relevant-js' %}
+{% endblock %}
+
+
+
 
 {% block stages %}
   {%- set pages = h.scheming_get_dataset_form_pages(dataset_type) -%}
