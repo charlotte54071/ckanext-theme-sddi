@@ -156,3 +156,41 @@ a.facets-type:hover {
   color: white;
   background-color: #3f96e8;
 }
+
+
+
+
+
+/* add new styles below this line */
+.btn-group .dropdown-menu {
+    border-radius: 16px;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.08);
+    padding: 1rem 0.75rem;
+    min-width: 260px;
+    border: none;
+}
+.btn-group .dropdown-menu li a {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 1.3rem;
+    font-weight: 500;
+    padding: 0.7rem 0.9rem;
+    border-radius: 8px;
+    transition: background 0.16s;
+    color: #304050;
+}
+.btn-group .dropdown-menu li a:hover {
+    background: #f3f7fa;
+    color: #1558b0;
+}
+.btn-group .dropdown-menu li:first-child a {
+    color: #1769d2;
+}
+.btn-group .dropdown-menu li:first-child a svg {
+    color: #1769d2;
+}
+.btn-group .dropdown-menu li:last-child a svg {
+    color: #434851;
+}
+
