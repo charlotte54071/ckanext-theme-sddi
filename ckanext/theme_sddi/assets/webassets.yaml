@@ -21,3 +21,10 @@ theme_css:
     - css/theme.css
     - css/restricted_theme.css
 
+add_dataset_dropdown_js:
+  output: ckanext-theme-sddi/%(version)s_add_dataset_dropdown.js
+  contents:
+    - js/add_dataset_dropdown.js
+  extra:
+    preload:
+      - base/main
