@@ -5,29 +5,29 @@
 {# 1. 渲染 main categories，按 object_type 区分 #}
 {% if object_type == 'dataset' %}
     <label class="control-label" for="field-group">
-        <span class="control-required">*</span> Hauptkategorien (Datensatz)
+        <span class="control-required">*</span> Main Categories (Datensatz)
     </label>
     <div class="controls">
         <select id="field-group" name="groups__0__id" data-module="autocomplete">
-            <option value="dataset">Datensatz und Dokumente</option>
+            <option value="dataset">Dataset and Documents</option>
             <!-- 可继续添加 dataset schema 下的 main categories -->
         </select>
     </div>
     <br>
 {% elif object_type == 'project' %}
     <label class="control-label" for="field-group">
-        <span class="control-required">*</span> Hauptkategorien (Projekt)
+        <span class="control-required">*</span> Main Categories (Project)
     </label>
     <div class="controls">
         <select id="field-group" name="groups__0__id" data-module="autocomplete">
-            <option value="project">Projekt</option>
+            <option value="project">Project</option>
             <!-- 可继续添加 project schema 下的 main categories -->
         </select>
     </div>
     <br>
 {% else %}
     <label class="control-label" for="field-group">
-        <span class="control-required">*</span> Hauptkategorien (默认)
+        <span class="control-required">*</span> Main Categories (默认)
     </label>
     <div class="controls">
         <select id="field-group" name="groups__0__id" data-module="autocomplete">
@@ -40,24 +40,22 @@
 {% endif %}
 
 {# 2. Themen 主题分组，多选不变 #}
-<label class="control-label" for="field-group">
+<label class="control-label" for="field-group-topic">
     <span class="control-required"></span>Themen
 </label>
-{% for group in h.get_allowable_children_groups('topics') %}
-    <label class="checkbox" for="field-group-{{ loop.index0 + 100 }}" style="display:none">
-        <input id="field-group-{{ loop.index0 + 100 }}" type="checkbox" name="groups__{{ loop.index0 + 100 }}__id" value="{{ group.id }}"/>{{ group.title }}
-    </label>
-{% endfor %}
-
 <div class="controls">
-    <select id="field-group-topic" name="groups__2__id" data-module="autocomplete">
-        <option value="" selected="selected">Bitte wählen Sie</option>
-        {% for group in h.get_allowable_children_groups('topics') %}
-            <option value="{{ group.id }}">{{ group.title }}</option>
-        {% endfor %}
-        <option value="">Keine</option>
-    </select>
+    {% for group in h.get_allowable_children_groups('topics') %}
+        <label class="checkbox" for="field-group-topic-{{ loop.index0 }}">
+            <input type="checkbox"
+                   id="field-group-topic-{{ loop.index0 }}"
+                   name="groups__{{ loop.index0 + 100 }}__id"
+                   value="{{ group.id }}"
+                   {% if group.id in data_group_ids %}checked{% endif %}
+            > {{ group.title }}
+        </label>
+    {% endfor %}
 </div>
+
 <br>
 
 <div class="form-group">
