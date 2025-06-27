@@ -14,19 +14,24 @@
   </select>
 </div>
 
-<script>
-  (function () {
+<script type="text/javascript">
+require(['jquery'], function($) {
+  $(function() {
     const hoaiPhaseMap = {
       'pre-construction': ['LPH 1','LPH 2','LPH 6','LPH 7'],
       'survey':           ['LPH 1'],
       'design':           ['LPH 3','LPH 4','LPH 5'],
       'construction':     ['LPH 8'],
       'operation':        ['LPH 9'],
+      'maintenance-update':['LPH 9'],
       'retirement':       []
     };
+
     function updateHoai() {
-      const sel = $('#field-lifecycle_phase').val();
+      // **注意这里的 lifecycle 拼写**
+      const sel = $('#field-lifecycle_phase').val() || '';
       const allow = hoaiPhaseMap[sel] || [];
+
       $('#field-hoai_phase option').each(function() {
         if (!this.value) return;
         $(this).toggle(allow.includes(this.value));
@@ -36,9 +41,15 @@
         $('#field-hoai_phase').val('');
       }
     }
-    $(document).ready(function () {
+
+    // 只有当两个字段都存在时才绑定
+    if ($('#field-lifecycle_phase').length && $('#field-hoai_phase').length) {
       updateHoai();
       $('#field-lifecycle_phase').on('change', updateHoai);
-    });
-  })();
+    } else {
+      console.warn('找不到 lifecycle_phase 或 hoai_phase 字段');
+    }
+  });
+});
 </script>
+
