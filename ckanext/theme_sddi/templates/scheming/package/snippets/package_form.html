@@ -1,4 +1,4 @@
-{% extends 'package/new_package_form.html' %}
+{% asset 'theme_sddi/hoai_phase_linkage_js' %}{% extends 'package/new_package_form.html' %}
 
 {% block stages %}
   {%- set pages = h.scheming_get_dataset_form_pages(dataset_type) -%}
@@ -116,3 +116,5 @@
     {{ super() }}
   {%- endif -%}
 {% endblock %}
+
+{% asset 'theme_sddi/hoai_phase_linkage_js' %}
