@@ -1,11 +1,9 @@
 // HOAI mapping for lifecycle phases
-// This script dynamically updates the options for the HOAI phase field based on the selected lifecycle phase
 const hoaiPhaseMap = {
   'pre-construction': ['LPH 1', 'LPH 2', 'LPH 6', 'LPH 7'],
   'survey': ['LPH 1'],
   'design': ['LPH 3', 'LPH 4', 'LPH 5'],
   'construction': ['LPH 8'],
-  'operation': ['LPH 9'],
   'retirement': [] 
 };
 
@@ -14,7 +12,7 @@ function updateHoaiPhaseOptions(selectedPhase) {
 
   $('#field-hoai_phase option').each(function () {
     const val = $(this).val();
-    if (!val) return; 
+    if (!val) return;
     if (allowed.includes(val)) {
       $(this).show();
     } else {
@@ -22,23 +20,27 @@ function updateHoaiPhaseOptions(selectedPhase) {
     }
   });
 
-  // if the current value is not in the allowed options, reset it
   const current = $('#field-hoai_phase').val();
   if (current && !allowed.includes(current)) {
     $('#field-hoai_phase').val('');
   }
 }
 
+// 尝试等 200ms 后初始化，确保字段已经加载
 $(document).ready(function () {
-  // initialize the hoai_phase options based on the current lifecycle_phase
-  // This assumes that the lifecycle_phase field is already populated
-  const selected = $('#field-lifecycle_phase').val();
-  updateHoaiPhaseOptions(selected);
+  setTimeout(function () {
+    const $lifecycle = $('#field-lifecycle_phase');
+    const $hoai = $('#field-hoai_phase');
 
-  // if the lifecycle_phase changes, update the hoai_phase options
-  // This assumes that the lifecycle_phase field is a select element
-  $('#field-lifecycle_phase').on('change', function () {
-    const selected = $(this).val();
-    updateHoaiPhaseOptions(selected);
-  });
+    if ($lifecycle.length === 0 || $hoai.length === 0) {
+      console.warn('hoai_phase_linkage.js: 字段未找到');
+      return;
+    }
+
+    updateHoaiPhaseOptions($lifecycle.val());
+
+    $lifecycle.on('change', function () {
+      updateHoaiPhaseOptions($(this).val());
+    });
+  }, 200);
 });
