@@ -1,0 +1,44 @@
+<div class="form-group">
+  <label for="field-hoai_phase">HOAI Service Phase</label>
+  <select id="field-hoai_phase" name="hoai_phase" class="form-control">
+    <option value="">-- Select HOAI Phase --</option>
+    <option value="LPH 1">LPH 1 – Basic Evaluation</option>
+    <option value="LPH 2">LPH 2 – Preliminary Design</option>
+    <option value="LPH 3">LPH 3 – Design Planning</option>
+    <option value="LPH 4">LPH 4 – Approval Planning</option>
+    <option value="LPH 5">LPH 5 – Construction Drawings</option>
+    <option value="LPH 6">LPH 6 – Tender Preparation</option>
+    <option value="LPH 7">LPH 7 – Tender Support</option>
+    <option value="LPH 8">LPH 8 – Site Supervision</option>
+    <option value="LPH 9">LPH 9 – Operation Support</option>
+  </select>
+</div>
+
+<script>
+  (function () {
+    const hoaiPhaseMap = {
+      'pre-construction': ['LPH 1','LPH 2','LPH 6','LPH 7'],
+      'survey':           ['LPH 1'],
+      'design':           ['LPH 3','LPH 4','LPH 5'],
+      'construction':     ['LPH 8'],
+      'operation':        ['LPH 9'],
+      'retirement':       []
+    };
+    function updateHoai() {
+      const sel = $('#field-lifecycle_phase').val();
+      const allow = hoaiPhaseMap[sel] || [];
+      $('#field-hoai_phase option').each(function() {
+        if (!this.value) return;
+        $(this).toggle(allow.includes(this.value));
+      });
+      const cur = $('#field-hoai_phase').val();
+      if (cur && !allow.includes(cur)) {
+        $('#field-hoai_phase').val('');
+      }
+    }
+    $(document).ready(function () {
+      updateHoai();
+      $('#field-lifecycle_phase').on('change', updateHoai);
+    });
+  })();
+</script>

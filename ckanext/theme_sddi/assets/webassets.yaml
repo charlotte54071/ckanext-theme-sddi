@@ -29,7 +29,3 @@ add_dataset_dropdown_js:
     preload:
       - base/main
     
-hoai_phase_linkage_js:
-  output: ckanext-theme-sddi/%(version)s_hoai_phase_linkage.js
-  contents:
-    - js/hoai_phase_linkage.js
