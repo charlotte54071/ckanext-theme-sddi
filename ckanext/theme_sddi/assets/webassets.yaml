@@ -13,7 +13,6 @@ theme_js:
       - base/main
   contents:
     - js/jquery.hierarchy.js
-    - js/hoai_phase_linkage.js
 
 theme_css:
   output: ckanext-theme-sddi/%(version)s_theme.css
