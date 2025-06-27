@@ -7,9 +7,7 @@ const hoaiPhaseMap = {
   'retirement': [] 
 };
 
-// hoai_phase_linkage.js
 (function(){
-  // 尝试多种方式查找表单控件
   function findField(name) {
     return (
       document.querySelector('select[name="' + name + '"]') ||
@@ -18,7 +16,6 @@ const hoaiPhaseMap = {
     );
   }
 
-  // 找到控件
   const lifecyclePhase = findField('lifecycle_phase');
   const hoaiPhase = findField('hoai_phase');
 
@@ -29,20 +26,33 @@ const hoaiPhaseMap = {
     return;
   }
 
-  // 举例：lifecycle_phase 变化时，更新 hoai_phase 选项
-  lifecyclePhase.addEventListener('change', function() {
-    // 可以根据 lifecyclePhase.value 动态改变 hoaiPhase 的选项、可用性等
-    // 举例：如果生命周期选某个值，只允许 hoai_phase 选第一个选项
-    if (lifecyclePhase.value === '只允许第一个') {
-      hoaiPhase.value = hoaiPhase.options[0]?.value || '';
+  function updateHoaiOptions(phaseKey) {
+    const allowedPhases = hoaiPhaseMap[phaseKey] || [];
+    
+    // 清空当前 options
+    hoaiPhase.innerHTML = '';
+
+    if (allowedPhases.length === 0) {
       hoaiPhase.disabled = true;
-    } else {
-      hoaiPhase.disabled = false;
+      return;
     }
+
+    // 添加允许的选项
+    for (const phase of allowedPhases) {
+      const option = document.createElement('option');
+      option.value = phase;
+      option.textContent = phase;
+      hoaiPhase.appendChild(option);
+    }
+
+    hoaiPhase.disabled = false;
+  }
+
+  lifecyclePhase.addEventListener('change', function() {
+    const selected = lifecyclePhase.value;
+    updateHoaiOptions(selected);
   });
 
-  // 可根据需要添加更多联动逻辑
-
-  // 初始触发一次，保证状态同步
+  // 初始触发一次
   lifecyclePhase.dispatchEvent(new Event('change'));
 })();
