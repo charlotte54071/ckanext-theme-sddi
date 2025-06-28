@@ -14,3 +14,9 @@
     {% asset 'theme_sddi/theme_css' %}
     {% asset 'hierarchy/hierarchy_css' %}
 {% endblock %}
+
+{% block scripts %}
+  {{ super() }}
+  {% asset 'theme_sddi/theme_js' %}
+{% endblock %}
+
