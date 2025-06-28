@@ -15,45 +15,33 @@
 </div>
 
 <script type="text/javascript">
-  (function($) {
-    // 映射表
-    var hoaiPhaseMap = {
-      'pre-construction': ['LPH 1','LPH 2','LPH 6','LPH 7'],
-      'survey':           ['LPH 1'],
-      'design':           ['LPH 3','LPH 4','LPH 5'],
-      'construction':     ['LPH 8'],
-      'operation':        ['LPH 9'],
-      'maintenance-update':['LPH 9'],
-      'retirement':       []
-    };
-
-    function updateHoai() {
-      var sel = $('#field-lifecycle_phase').val() || '';
-      var allow = hoaiPhaseMap[sel] || [];
-
-      console.log('HOAI update triggered; lifecycle_phase=', sel, 'allowed=', allow);
-
-      $('#field-hoai_phase option').each(function() {
-        if (!this.value) return;
-        $(this).toggle(allow.includes(this.value));
-      });
-
-      var cur = $('#field-hoai_phase').val();
-      if (cur && !allow.includes(cur)) {
-        $('#field-hoai_phase').val('');
-      }
-    }
-
-    // DOM ready 后绑定
+  require(['jquery'], function($) {
+    // DOM ready
     $(function() {
-      if (!$('#field-lifecycle_phase').length || !$('#field-hoai_phase').length) {
-        console.warn('HOAI: 找不到 lifecycle_phase 或 hoai_phase 字段');
-        return;
+      const map = {
+        'pre-construction':['LPH 1','LPH 2','LPH 6','LPH 7'],
+        'survey':['LPH 1'],
+        'design':['LPH 3','LPH 4','LPH 5'],
+        'construction':['LPH 8'],
+        'operation':['LPH 9'],
+        'retirement':[]
+      };
+      function update() {
+        const sel = $('#field-lifecycle_phase').val()||'';
+        const allow = map[sel]||[];
+        $('#field-hoai_phase option').each(function(){
+          if(!this.value) return;
+          $(this).toggle(allow.includes(this.value));
+        });
+        if (!allow.includes($('#field-hoai_phase').val())) {
+          $('#field-hoai_phase').val('');
+        }
       }
-      // 初始执行一次
-      updateHoai();
-      // 监听 change
-      $('#field-lifecycle_phase').on('change', updateHoai);
+      // 只在字段都存在时绑定
+      if ($('#field-lifecycle_phase').length && $('#field-hoai_phase').length) {
+        update();
+        $('#field-lifecycle_phase').on('change', update);
+      }
     });
-  })(jQuery);
+  });
 </script>
