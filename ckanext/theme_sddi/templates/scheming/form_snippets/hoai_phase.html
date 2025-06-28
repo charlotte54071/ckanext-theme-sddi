@@ -15,32 +15,46 @@
 </div>
 
 <script type="text/javascript">
+  // 用 CKAN 的 RequireJS 加载 jQuery 确保时机正确
   require(['jquery'], function($) {
-    // DOM ready
+    // 当 DOM 完全就绪后
     $(function() {
-      const map = {
-        'pre-construction':['LPH 1','LPH 2','LPH 6','LPH 7'],
-        'survey':['LPH 1'],
-        'design':['LPH 3','LPH 4','LPH 5'],
-        'construction':['LPH 8'],
-        'operation':['LPH 9'],
-        'retirement':[]
+      // HOAI 映射表
+      var hoaiPhaseMap = {
+        'pre-construction': ['LPH 1','LPH 2','LPH 6','LPH 7'],
+        'survey':           ['LPH 1'],
+        'design':           ['LPH 3','LPH 4','LPH 5'],
+        'construction':     ['LPH 8'],
+        'operation':        ['LPH 9'],
+        'retirement':       []
       };
-      function update() {
-        const sel = $('#field-lifecycle_phase').val()||'';
-        const allow = map[sel]||[];
-        $('#field-hoai_phase option').each(function(){
-          if(!this.value) return;
+
+      // 过滤函数
+      function updateHoai() {
+        var sel = $('#field-lifecycle_phase').val() || '';
+        var allow = hoaiPhaseMap[sel] || [];
+        // 调试日志
+        console.log('[HOAI] lifecycle_phase=', sel, '→ allowed=', allow);
+
+        $('#field-hoai_phase option').each(function() {
+          if (!this.value) return;
           $(this).toggle(allow.includes(this.value));
         });
-        if (!allow.includes($('#field-hoai_phase').val())) {
+        // 如果当前值不合法则清空
+        var cur = $('#field-hoai_phase').val();
+        if (cur && !allow.includes(cur)) {
           $('#field-hoai_phase').val('');
         }
       }
-      // 只在字段都存在时绑定
-      if ($('#field-lifecycle_phase').length && $('#field-hoai_phase').length) {
-        update();
-        $('#field-lifecycle_phase').on('change', update);
+
+      // 仅当两个字段都存在时绑定
+      var $lc = $('#field-lifecycle_phase');
+      var $hp = $('#field-hoai_phase');
+      if ($lc.length && $hp.length) {
+        updateHoai();
+        $lc.on('change', updateHoai);
+      } else {
+        console.warn('[HOAI] 找不到 lifecycle_phase 或 hoai_phase 字段');
       }
     });
   });
