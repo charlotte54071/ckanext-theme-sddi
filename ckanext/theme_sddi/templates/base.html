@@ -15,6 +15,12 @@
     {% asset 'hierarchy/hierarchy_css' %}
 {% endblock %}
 
-{% asset 'theme_sddi/hoai_phase_linkage_js' %}
+{% block scripts %}
+  {{ super() }}
+  {% asset 'theme_sddi/hoai_phase_linkage_js' %}
+{% endblock %}
 
-
+{% block scripts %}
+  {{ super() }}
+  {% asset 'theme_sddi/hoai_phase_linkage_js' %}
+{% endblock %}
