@@ -1,0 +1,69 @@
+{# lifecycle_hoai.html #}
+
+<div class="form-group">
+  <label for="field-lifecycle_phase">Life Cycle Phase</label>
+  <select id="field-lifecycle_phase" name="lifecycle_phase" class="form-control">
+    <option value="">-- Select Life Cycle Phase --</option>
+    {% for choice in field.choices if field.name == 'lifecycle_phase' %}
+      <option value="{{ choice.value }}" {% if context.get('lifecycle_phase') == choice.value %}selected{% endif %}>
+        {{ choice.label }}
+      </option>
+    {% endfor %}
+  </select>
+</div>
+
+<div class="form-group">
+  <label for="field-hoai_phase">HOAI Service Phase</label>
+  <select id="field-hoai_phase" name="hoai_phase" class="form-control">
+    <option value="">-- Select HOAI Phase --</option>
+    <option value="LPH 1" {% if context.get('hoai_phase')=='LPH 1' %}selected{% endif %}>LPH 1 – Basic Evaluation</option>
+    <option value="LPH 2" {% if context.get('hoai_phase')=='LPH 2' %}selected{% endif %}>LPH 2 – Preliminary Design</option>
+    <option value="LPH 3" {% if context.get('hoai_phase')=='LPH 3' %}selected{% endif %}>LPH 3 – Design Planning</option>
+    <option value="LPH 4" {% if context.get('hoai_phase')=='LPH 4' %}selected{% endif %}>LPH 4 – Approval Planning</option>
+    <option value="LPH 5" {% if context.get('hoai_phase')=='LPH 5' %}selected{% endif %}>LPH 5 – Construction Drawings</option>
+    <option value="LPH 6" {% if context.get('hoai_phase')=='LPH 6' %}selected{% endif %}>LPH 6 – Tender Preparation</option>
+    <option value="LPH 7" {% if context.get('hoai_phase')=='LPH 7' %}selected{% endif %}>LPH 7 – Tender Support</option>
+    <option value="LPH 8" {% if context.get('hoai_phase')=='LPH 8' %}selected{% endif %}>LPH 8 – Site Supervision</option>
+    <option value="LPH 9" {% if context.get('hoai_phase')=='LPH 9' %}selected{% endif %}>LPH 9 – Operation Support</option>
+  </select>
+</div>
+
+<script type="text/javascript">
+  require(['jquery'], function($) {
+    $(function() {
+      var map = {
+        'pre-construction': ['LPH 1','LPH 2','LPH 6','LPH 7'],
+        'survey':           ['LPH 1'],
+        'design':           ['LPH 3','LPH 4','LPH 5'],
+        'construction':     ['LPH 8'],
+        'operation':        ['LPH 9'],
+        'retirement':       []
+      };
+
+      function updateHoai() {
+        var sel = $('#field-lifecycle_phase').val() || '';
+        var allow = map[sel] || [];
+        console.log('[HOAI] lifecycle_phase=', sel, '→ allowed=', allow);
+
+        $('#field-hoai_phase option').each(function() {
+          if (!this.value) return;
+          $(this).toggle(allow.includes(this.value));
+        });
+        var cur = $('#field-hoai_phase').val();
+        if (cur && !allow.includes(cur)) {
+          $('#field-hoai_phase').val('');
+        }
+      }
+
+      // 只在两个字段都存在时绑定
+      var $lc = $('#field-lifecycle_phase');
+      var $hp = $('#field-hoai_phase');
+      if ($lc.length && $hp.length) {
+        updateHoai();
+        $lc.on('change', updateHoai);
+      } else {
+        console.warn('[HOAI] 字段未找到');
+      }
+    });
+  });
+</script>
