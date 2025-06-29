@@ -126,7 +126,7 @@
 
 	<div class="controls">
 		<select id="field-group_2" name="groups__2__id" data-module="autocomplete" onclick="show_checkboxes(this)">
-			<option value="" selected="selected">Bitte wählen Sie</option>
+			<option value="" selected="selected">Please Choose Relevant Topics</option>
 			{% for group in h.get_allowable_children_groups('topics') %}
 			{% set existing_group_id = group.id %}
 			{% if group.id not in group_ids %}
@@ -217,12 +217,12 @@
 
 	<div class="controls">
 		<select id="field-group" name="groups__2__id" data-module="autocomplete" onclick="show_checkboxes(this)">
-			<option value="" selected="selected">Bitte wählen Sie</option>
+			<option value="" selected="selected">Please Choose Relevant Topics</option>
 			{% for group in h.get_allowable_children_groups('topics') %}
 			{% set existing_group_id = group.id %}
 			<option value="{{ group.id }}">{{ group.title }}</option>
 			{% endfor %}
-			<option value="">Keine</option>
+			<option value="">No</option>
 		</select>
 	</div>
 	<br>
@@ -253,7 +253,7 @@
 <div class="form-group">
 	<div class="info-block">
 		<i class="fa fa-info-circle"></i>{% trans %}
-		Assignment to the "Topics" and "Model Regions" groups is optional; more than one group can be selected. For a better overview of all the groups, see these <a href="/group/">Seite</a> an.{% endtrans %}
+		 Assignment to the "Topics" and "Model Regions" groups is optional; more than one group can be selected. For a better overview of all the groups, see these <a href="/group/">Seite</a> an.{% endtrans %}
 	</div>
 </div>
 <hr />
