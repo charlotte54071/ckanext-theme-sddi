@@ -13,7 +13,6 @@ from ckan.lib.plugins import DefaultTranslation
 
 
 from ckan.plugins import toolkit as tk
-from ckan.plugins.toolkit import add_resource
 
 log = logging.getLogger(__name__)
 
@@ -35,8 +34,7 @@ class ThemeSddiPlugin(plugins.SingletonPlugin, DefaultTranslation):
         tk.add_template_directory(config_, "templates")
         tk.add_public_directory(config_, "public")
         tk.add_resource("assets", "theme_sddi")
-
-        add_resource('fanstatic', 'hoai_phase_linkage')
+    
 
     # IActions
     def get_actions(self):
